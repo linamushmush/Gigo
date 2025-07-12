@@ -1,78 +1,145 @@
-<!-- PROTOTYP: AI-JURIDISK CO-PILOT (WEBBAPP) --><!DOCTYPE html><html lang="sv">
+<!DOCTYPE html><html lang="sv">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juridisk Co-Pilot</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background: #f8f8f8; color: #222; }
-    header { background: #1d181f; color: #fff; padding: 1rem; text-align: center; }
-    .container { max-width: 900px; margin: auto; padding: 2rem; }
-    textarea, input, button { width: 100%; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; }
-    .highlight { background-color: #fff3f3; border-left: 4px solid red; padding: 0.5rem; margin: 1rem 0; }
-    .section { margin-bottom: 3rem; }
-    .response-box, .strategi-box, .kallor-box { background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .label { font-weight: bold; margin-bottom: 0.5rem; display: block; }
+    :root {
+      --bg: #f3ece6;
+      --text: #222;
+      --accent: #c84733;
+      --neutral-dark: #3e3e3e;
+      --support: #3b8670; /* Blågrön */
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+    }
+    header, .landing {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 1rem;
+      color: var(--neutral-dark);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 2rem;
+    }
+    .hidden { display: none; }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    input[type="file"], textarea, button {
+      width: 100%;
+      margin: 1rem 0;
+      padding: 1rem;
+      border-radius: 1rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    section {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .highlight {
+      background-color: #fff1f0;
+      border-left: 4px solid var(--accent);
+      padding: 1rem;
+    }
+    h2 {
+      color: var(--support);
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Juridisk Co-Pilot</h1>
-    <p>Förstå dina rättigheter. Fatta kloka beslut.</p>
-  </header>
-  <div class="container">
-    <div class="section">
-      <label class="label" for="inputText">📤 Klistra in eller skriv in dom, avtal eller kravbrev här:</label>
-      <textarea id="inputText" rows="10" placeholder="Klistra in text från t.ex. domstol, myndighet eller privatperson..."></textarea>
-      <button onclick="analyseraText()">🔍 Analysera dokument</button>
-    </div><div class="section response-box" id="tolkningSection" style="display:none">
-  <h2>🧠 Tolkning i klarspråk</h2>
+  <div class="landing" id="landing">
+    <h1>Välkommen till Juridisk Co-Pilot</h1>
+    <p>För dig som vill förstå dokument, domar och krav på ett tydligt sätt.</p>
+    <button class="btn-primary" onclick="startaAppen()">Starta analys</button>
+  </div>  <div class="container hidden" id="analysView">
+    <section>
+      <h2>📎 Ladda upp dokument eller klistra in text</h2>
+      <input type="file" id="filInput" accept=".txt,.pdf,.doc,.docx">
+      <textarea id="inputText" rows="8" placeholder="Eller klistra in innehåll från dokument här..."></textarea>
+      <button onclick="analyseraText()">🔍 Analysera</button>
+    </section><section id="tolkningSection" class="hidden">
+  <h2>🧠 Tolkning</h2>
   <p id="tolkningText">...</p>
-</div>
+</section>
 
-<div class="section strategi-box" id="strategiSection" style="display:none">
-  <h2>🎯 Dina alternativ och strategiska råd</h2>
+<section id="strategiSection" class="hidden">
+  <h2>🎯 Strategiska råd</h2>
   <ul id="strategiList"></ul>
-</div>
+</section>
 
-<div class="section highlight" id="osakertSection" style="display:none">
-  <strong>⚠️ Obs! Följande punkter bör granskas särskilt:</strong>
-  <ul id="osakraPunkter"></ul>
-</div>
+<section id="osakertSection" class="hidden">
+  <div class="highlight">
+    <strong>⚠️ Bör granskas:</strong>
+    <ul id="osakraPunkter"></ul>
+  </div>
+</section>
 
-<div class="section kallor-box" id="kallorSection" style="display:none">
-  <h2>📚 Källor och lagrum</h2>
+<section id="kallorSection" class="hidden">
+  <h2>📚 Källor</h2>
   <ul id="kallorList"></ul>
-</div>
+</section>
 
   </div>  <script>
+    function startaAppen() {
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('analysView').classList.remove('hidden');
+    }
+
     function analyseraText() {
       const text = document.getElementById('inputText').value.trim();
       if (!text) return;
 
-      document.getElementById('tolkningSection').style.display = 'block';
-      document.getElementById('strategiSection').style.display = 'block';
-      document.getElementById('osakertSection').style.display = 'block';
-      document.getElementById('kallorSection').style.display = 'block';
+      document.getElementById('tolkningSection').classList.remove('hidden');
+      document.getElementById('strategiSection').classList.remove('hidden');
+      document.getElementById('osakertSection').classList.remove('hidden');
+      document.getElementById('kallorSection').classList.remove('hidden');
 
-      // Placeholderinnehåll:
-      document.getElementById('tolkningText').textContent = 'Det här dokumentet verkar vara ett kravbrev som hänvisar till en obetald faktura. Beloppet som krävs är 14 350 kr inklusive ränta och inkassoavgift. Det anges att ärendet kan gå till Kronofogden.';
+      document.getElementById('tolkningText').textContent = 'Detta verkar vara ett kravbrev relaterat till obetald faktura. Beloppet är 14 350 kr inklusive ränta och avgifter. Vid utebliven betalning hotas med ansökan hos Kronofogden.';
 
       document.getElementById('strategiList').innerHTML = `
-        <li>Kontrollera om fordran är preskriberad (se preskriptionslagen).</li>
-        <li>Begär fullständig dokumentation från motparten som styrker fordran.</li>
-        <li>Formulera ett bestridande och skicka det skriftligen till både avsändare och eventuell inkassobyrå.</li>
+        <li>Begär underlag som styrker fordran.</li>
+        <li>Granska preskriptionstiden enligt preskriptionslagen.</li>
+        <li>Skicka ett skriftligt bestridande till fordringsägaren.</li>
       `;
 
       document.getElementById('osakraPunkter').innerHTML = `
-        <li>Fakturadatum saknas – svårt att avgöra preskription.</li>
-        <li>Ingen bifogad dokumentation som styrker beloppet.</li>
+        <li>Fakturadatum saknas – omöjligt att bedöma preskription.</li>
+        <li>Inga bilagor eller avtal som bevisar skulden.</li>
       `;
 
       document.getElementById('kallorList').innerHTML = `
         <li>Preskriptionslagen (1981:130)</li>
         <li>Inkassolagen (1974:182)</li>
-        <li>Konsumentverkets vägledning om bestridande av krav</li>
+        <li>Konsumentverkets vägledning om bestridanden</li>
       `;
     }
   </script></body>

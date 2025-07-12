@@ -1,0 +1,79 @@
+<!-- PROTOTYP: AI-JURIDISK CO-PILOT (WEBBAPP) --><!DOCTYPE html><html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juridisk Co-Pilot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background: #f8f8f8; color: #222; }
+    header { background: #1d181f; color: #fff; padding: 1rem; text-align: center; }
+    .container { max-width: 900px; margin: auto; padding: 2rem; }
+    textarea, input, button { width: 100%; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; }
+    .highlight { background-color: #fff3f3; border-left: 4px solid red; padding: 0.5rem; margin: 1rem 0; }
+    .section { margin-bottom: 3rem; }
+    .response-box, .strategi-box, .kallor-box { background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .label { font-weight: bold; margin-bottom: 0.5rem; display: block; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Juridisk Co-Pilot</h1>
+    <p>Förstå dina rättigheter. Fatta kloka beslut.</p>
+  </header>
+  <div class="container">
+    <div class="section">
+      <label class="label" for="inputText">📤 Klistra in eller skriv in dom, avtal eller kravbrev här:</label>
+      <textarea id="inputText" rows="10" placeholder="Klistra in text från t.ex. domstol, myndighet eller privatperson..."></textarea>
+      <button onclick="analyseraText()">🔍 Analysera dokument</button>
+    </div><div class="section response-box" id="tolkningSection" style="display:none">
+  <h2>🧠 Tolkning i klarspråk</h2>
+  <p id="tolkningText">...</p>
+</div>
+
+<div class="section strategi-box" id="strategiSection" style="display:none">
+  <h2>🎯 Dina alternativ och strategiska råd</h2>
+  <ul id="strategiList"></ul>
+</div>
+
+<div class="section highlight" id="osakertSection" style="display:none">
+  <strong>⚠️ Obs! Följande punkter bör granskas särskilt:</strong>
+  <ul id="osakraPunkter"></ul>
+</div>
+
+<div class="section kallor-box" id="kallorSection" style="display:none">
+  <h2>📚 Källor och lagrum</h2>
+  <ul id="kallorList"></ul>
+</div>
+
+  </div>  <script>
+    function analyseraText() {
+      const text = document.getElementById('inputText').value.trim();
+      if (!text) return;
+
+      document.getElementById('tolkningSection').style.display = 'block';
+      document.getElementById('strategiSection').style.display = 'block';
+      document.getElementById('osakertSection').style.display = 'block';
+      document.getElementById('kallorSection').style.display = 'block';
+
+      // Placeholderinnehåll:
+      document.getElementById('tolkningText').textContent = 'Det här dokumentet verkar vara ett kravbrev som hänvisar till en obetald faktura. Beloppet som krävs är 14 350 kr inklusive ränta och inkassoavgift. Det anges att ärendet kan gå till Kronofogden.';
+
+      document.getElementById('strategiList').innerHTML = `
+        <li>Kontrollera om fordran är preskriberad (se preskriptionslagen).</li>
+        <li>Begär fullständig dokumentation från motparten som styrker fordran.</li>
+        <li>Formulera ett bestridande och skicka det skriftligen till både avsändare och eventuell inkassobyrå.</li>
+      `;
+
+      document.getElementById('osakraPunkter').innerHTML = `
+        <li>Fakturadatum saknas – svårt att avgöra preskription.</li>
+        <li>Ingen bifogad dokumentation som styrker beloppet.</li>
+      `;
+
+      document.getElementById('kallorList').innerHTML = `
+        <li>Preskriptionslagen (1981:130)</li>
+        <li>Inkassolagen (1974:182)</li>
+        <li>Konsumentverkets vägledning om bestridande av krav</li>
+      `;
+    }
+  </script></body>
+</html>
